@@ -5,16 +5,23 @@ const listaDeDestinos = new Array(
    ` Rio de Janeiro`
 )
 
-const idadeComprador = 15// 15
+const idadeComprador = 18// 15
 const estaAcompanhada = true
+const temPassagemComprada = true
 
 console.log(`Destinos possíveis: ${listaDeDestinos} `)
 
-if (idadeComprador >= 18 || estaAcompanhada == true) {
-   console.log(`Passagem autorizada, comprador maior de idade`)
+if (idadeComprador >= 18 || estaAcompanhada) {
+   console.log(`Passagem autorizada`)
    listaDeDestinos.splice(1, 1)
 } else {
    console.log(`Passagem Negada, comprador menor de idade`)
+}
+console.log("Embarque: \n\n")
+if (idadeComprador >= 18 && temPassagemComprada) {
+   console.log(`Boa viagem`)
+} else {
+   console.log(`Você não pode embarcar`)
 }
 
 console.log(listaDeDestinos)
