@@ -39,15 +39,32 @@ const mensagensDeErro = {
         customError: 'Você deve ser maior de 18 anos para se cadastrar'
     },
     cpf: {
-        valueMissing: 'O campo de cpf não pode estar vazio',
+        valueMissing: 'O campo de CPF não pode estar vazio',
         customError: 'O CPF digitado não é válido'
+    },
+    cep: {
+        valueMissing: 'O campo de CEP não pode estar vazio.',
+        patternMismatch: 'O CEP digitado não é válido'
+    },
+    logradouro: {
+        valueMissing: 'O campo de Logradouro não pode estar vazio',
+        patternMismatch: ' O logradouro não é válido'
+    },
+    cidade: {
+        valueMissing: 'O campo da Cidade não pode estar vazio',
+        patternMismatch: ' A cidade não é válida'
+    },
+    estado: {
+        valueMissing: 'O campo do Estado não pode estar vazio',
+        patternMismatch: ' O Estado não é válido'
     }
 
 }
 
 const validadores = {
     dataNascimento: input => validaDataNascimento(input),
-    cpf: input => validaCPF(input)
+    cpf: input => validaCPF(input),
+    cep: input => recuperarCEP(input)
 
 }
 
@@ -140,6 +157,23 @@ function confirmaDigito(soma) {
     return 11 - (soma % 11)
 }
 
-// 123 456 789 09
-// let soma = (11 * 1) + (10 * 2) + (9 * 3) ... (2 * 0)
-// let difitoVerificar = 11 - (soma % 11)
+function recuperarCEP(input) {
+    const cep = input.value.replace(/\D/g, '')
+    const url = `https://viacep.com.br/ws/${cep}/json/`
+    const options = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'content-type': 'application/json;charset=utf-8'
+        }
+    }
+    if (!input.validity.patternMismatch && !input.validity.valueMissing) {
+        fetch(url, options).then(
+            response => response.json()
+        ).then(
+            data => {
+                console.log(data)
+            }
+        )
+    }
+}
