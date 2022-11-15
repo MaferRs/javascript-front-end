@@ -1,21 +1,22 @@
 export function valida(input) {
     const tipoDeInput = input.dataset.tipo
+
     if (validadores[tipoDeInput]) {
         validadores[tipoDeInput](input)
     }
     if (input.validity.valid) {
         input.parentElement.classList.remove('input-container--invalido')
-        input.parentElement.querySelectpr('.input-menasgem-erro').innerHTML = ""
+        input.parentElement.querySelector('.input-mensagem-erro').innerHTML = ""
     } else {
         input.parentElement.classList.add('input-container--invalido')
-        input.parentElement.querySelectpr('.input-menasgem-erro').innerHTML = mostraMensagemDeErro
+        input.parentElement.querySelector('.input-mensagem-erro').innerHTML = mostraMensagemDeErro
             (tipoDeInput, input)
     }
 }
 
 const tiposDeErro = [
     'valueMissing',
-    ' typeMismatch',
+    'typeMismatch',
     'patternMismatch',
     'customError'
 
@@ -44,7 +45,8 @@ const mensagensDeErro = {
     },
     cep: {
         valueMissing: 'O campo de CEP não pode estar vazio.',
-        patternMismatch: 'O CEP digitado não é válido'
+        patternMismatch: 'O CEP digitado não é válido',
+        customError: 'Não foi possível buscar o CEP'
     },
     logradouro: {
         valueMissing: 'O campo de Logradouro não pode estar vazio',
@@ -57,6 +59,9 @@ const mensagensDeErro = {
     estado: {
         valueMissing: 'O campo do Estado não pode estar vazio',
         patternMismatch: ' O Estado não é válido'
+    },
+    preco: {
+        valueMissing: 'O campo do Preço não pode estar vazio',
     }
 
 }
@@ -92,7 +97,7 @@ function validaDataNascimento(input) {
 
 function maiorQue18(data) {
     const dataAtual = new Date()
-    const dataMais18 = new Date(data.getUTCFullYear() + 18, datagetUTCMonth(), datagetUTCDate())
+    const dataMais18 = new Date(data.getUTCFullYear() + 18, data.getUTCMonth(), data.getUTCDate())
     return dataMais18 < dataAtual
 
 }
@@ -128,12 +133,13 @@ function checaCPFRepetido(cpf) {
     })
     return cpfValido
 }
+
 function checaEstruturaCPF(cpf) {
     const multiplicador = 10
     return checaDigitoVerificador(cpf, multiplicador)
 }
 
-function checaCPFRepetido(cpf, multiplicador) {
+function checaDigitoVerificador(cpf, multiplicador) {
     if (multiplicador >= 12) {
         return true
     }
@@ -172,8 +178,25 @@ function recuperarCEP(input) {
             response => response.json()
         ).then(
             data => {
-                console.log(data)
+                if (data.erro) {
+                    input.setCustomValidity('Não foi possível buscar o CEP')
+                    return
+                }
+                input.setCustomValidity('')
+                preencheCamposComCEP(data)
+                return
             }
         )
     }
+}
+
+function preencheCamposComCEP(data) {
+    const logradouro = document.querySelector('[data-tipo="logradouro"]')
+    const cidade = document.querySelector('[data-tipo="cidade"]')
+    const estado = document.querySelector('[data-tipo="estado"]')
+
+
+    logradouro.value = data.logradouro
+    cidade.value = data.localidade
+    estado.value = data.uf
 }
