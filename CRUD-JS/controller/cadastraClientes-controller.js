@@ -1,6 +1,6 @@
 import { clienteService } from "../service/cliente-service.js"
 
-const formulario = document.querySelector('[data - form]')
+const formulario = document.querySelector('[data-form]')
 
 
 formulario.addEventListener('submit', (evento) => {
